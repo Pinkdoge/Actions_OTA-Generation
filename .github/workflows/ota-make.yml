@@ -1,33 +1,44 @@
-# This is a basic workflow to help you get started with Actions
+name: OTA-Generation
 
-name: CI
-
-# Controls when the action will run. Triggers the workflow on push or pull request
-# events but only for the master branch
 on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+  watch:
+    types: [started]
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+env:
+  OLD_ROM_URL: https://hugeota.d.miui.com/20.7.30/miui_RAPHAEL_20.7.30_2061f26e97_10.0.zip
+  NEW_ROM_URL: https://hugeota.d.miui.com/20.8.4/miui_RAPHAEL_20.8.4_22b148a8c9_10.0.zip
+
 jobs:
-  # This workflow contains a single job called "build"
   build:
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
+    if: github.event.repository.owner.id == github.event.sender.id
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-    - uses: actions/checkout@v2
+       - name: Checkout
+         uses: actions/checkout@main
+    
+       - name: Initialization environment 
+         run: |
+           sudo -E apt-get update
+           sudo -E apt-get install wget python python-pip python3 python3-pip
+           pip3 install setuptools bsdiff4
+        
+       - name: Clone OTA Generation Tool
+         run: |
+           git clone https://github.com/Pzqqt/Generic_OTA_Package_Generation_Script.git ota
+  
+       - name: Download ROM
+         run: |
+           wget -O old.zip $OLD_ROM_URL
+           wget -O new.zip $NEW_ROM_URL
+    
+       - name: Make OTA Package
+         run: |
+           cd ota
+           python3 mkota.py ~/old.zip ~/new.zip
+    
+       - name: Upload the OTA Package to WeTransfer
+         run: |
+           curl -sL https://git.io/file-transfer | sh
+           ./transfer wet ~/ota/OTA.zip
 
-    # Runs a single command using the runners shell
-    - name: Run a one-line script
-      run: echo Hello, world!
-
-    # Runs a set of commands using the runners shell
-    - name: Run a multi-line script
-      run: |
-        echo Add other actions to build,
-        echo test, and deploy your project.
