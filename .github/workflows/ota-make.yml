@@ -30,16 +30,16 @@ jobs:
   
        - name: Download ROM
          run: |
-           wget -O old.zip $OLD_ROM_URL
-           wget -O new.zip $NEW_ROM_URL
+           wget -O old.zip -P ota $OLD_ROM_URL
+           wget -O new.zip -P ota $NEW_ROM_URL
     
        - name: Make OTA Package
          run: |
            cd ota
-           python3 mkota.py ~/old.zip ~/new.zip
+           python3 mkota.py old.zip new.zip
     
        - name: Upload the OTA Package to WeTransfer
          run: |
            curl -sL https://git.io/file-transfer | sh
-           ./transfer wet ~/ota/OTA.zip
+           ./transfer wet ota/OTA.zip
 
