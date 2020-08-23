@@ -1,8 +1,12 @@
 name: OTA-Generation
 
 on:
-  watch:
-    types: [started]
+#  watch:
+#    types: [started]
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
 
 env:
   OLD_ROM_URL: https://kumisystems.dl.sourceforge.net/project/xiaomi-eu-multilang-miui-roms/xiaomi.eu/MIUI-WEEKLY-RELEASES/20.8.13/xiaomi.eu_multi_MIMAX3_20.8.13_v12-10.zip
@@ -37,6 +41,7 @@ jobs:
        - name: Make OTA Package
          run: |
            cd ota
+           sudo chmod -R 755 bin
            sudo python3 mkota.py old.zip new.zip
     
        - name: Upload the OTA Package to WeTransfer
