@@ -37,7 +37,7 @@ jobs:
        - name: Make OTA Package
          run: |
            cd ota
-           python3 mkota.py old.zip new.zip
+           sudo python3 mkota.py old.zip new.zip
     
        - name: Upload the OTA Package to WeTransfer
          run: |
