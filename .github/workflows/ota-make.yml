@@ -30,8 +30,9 @@ jobs:
   
        - name: Download ROM
          run: |
-           wget -O old.zip -P ota $OLD_ROM_URL
-           wget -O new.zip -P ota $NEW_ROM_URL
+           cd ota
+           wget -O old.zip $OLD_ROM_URL
+           wget -O new.zip $NEW_ROM_URL
     
        - name: Make OTA Package
          run: |
